@@ -31,3 +31,6 @@ def divide(a, b):
     This function takes two arguments, a and b, and returns the result of dividing a by b. If b is equal to zero, it returns the string 'Divide by Zero, Infinity' to avoid a ZeroDivisionError.
     """
     return a / b if b != 0 else "Divide by Zero, Infinity"
+
+def greet(name):
+    return "Hello, " + name
