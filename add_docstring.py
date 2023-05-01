@@ -66,10 +66,10 @@ def addDocstring(file_path):
             "--in-place",
             "--remove-unused-variables",
             "--remove-all-unused-imports",
-            new_file_path,
+            file_path,
         ]
     )
-    subprocess.run(["black", new_file_path])
+    subprocess.run(["black", file_path])
     print(f"Modified File: {file_path}")
 
 
