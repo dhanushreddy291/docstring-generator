@@ -41,4 +41,4 @@ def greet(name):
     :return: A string representing the greeting message with the name included.
 
     """
-    return "Hello, " + name
+    return "Hello, " + name if name else "World"
