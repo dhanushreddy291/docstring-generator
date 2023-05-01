@@ -19,14 +19,14 @@ history = [
 
 
 def addDocstring(file_path):
-    count = 1
+    count = 0
 
     with open(file_path, "r") as file:
         red = RedBaron(file.read())
     for node in red.find_all("def"):
         if not node.value[0].type == "string":
             # To avoid rate limit
-            if count % 3 == 0:
+            if count % 3 == 0 and count != 0:
                 # Sleep for 1 minute
                 time.sleep(60)
             function_code = node.dumps()
