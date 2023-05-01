@@ -32,5 +32,13 @@ def divide(a, b):
     """
     return a / b if b != 0 else "Divide by Zero, Infinity"
 
+
 def greet(name):
+    """
+
+    This function takes a name as input and returns a greeting message with the name included.
+    :param name: A string representing the name of the person to be greeted.
+    :return: A string representing the greeting message with the name included.
+
+    """
     return "Hello, " + name
