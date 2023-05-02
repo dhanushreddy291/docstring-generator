@@ -25,10 +25,10 @@ def addDocstring(file_path):
         red = RedBaron(file.read())
     for node in red.find_all("def"):
         if not node.value[0].type == "string":
-            # # To avoid rate limit
-            # if count % 3 == 0 and count != 0:
-            #     # Sleep for 1 minute
-            #     time.sleep(60)
+            # To avoid rate limit
+            if count % 3 == 0 and count != 0:
+                # Sleep for 1 minute
+                time.sleep(60)
             function_code = node.dumps()
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
