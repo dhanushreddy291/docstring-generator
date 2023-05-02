@@ -52,7 +52,7 @@ def Base(key: str):
         @classmethod
         def make_key(cls, part: str):
             """
-            This is a clas method that returns a Redis key by concatenating the model prefix and the given part. The model prefx is obtained from the class's meta attribute 'model_key_prefix'. If the attribute is not present, an empty string is used as the prefix. The prefix is stripped of any colons before concatenation with the part.
+            This is a clas method that returns a Redis key by concatenating the model prefix and the given part. The model prefx is obtained from the class's meta attribute 'model_key_prefix'.If the attribute is not present, an empty string is used as the prefix. The prefix is stripped of any colons before concatenation with the part.
             """
             return make_key(cls, part)
 
