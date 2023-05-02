@@ -11,18 +11,35 @@ app = Flask(__name__)
 allowed_files = ['pdf']
 
 def checkPdf(filename):
+    """
+    
+    Checks if the given filename is a PDF file by verifying its extension. Returns True if the file is a PDF, False otherwise.
+    
+    Args:
+        filename (str): The name of the file to be checked.
+    
+    Returns:
+        bool: True if the file is a PDF, False otherwise.
+    
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_files
 
 
 @app.route('/upload-pdf', methods=['POST'])
 def upload_pdf():
+    """
+    Uploads a PDF file to the server and redirects to a route to extract data from the uploaded file. Returns an error message if the file is not a PDF or if no file is selected for uploading.
+    
+    Returns:
+        Response: A response object with a JSON message and a status code.
+    """
     # check if the post request has the file part
-	if 'file' not in request.files:
+    if 'file' not in request.files:
 		resp = jsonify({'message' : 'No file part in the request'})
 		resp.status_code = 400
 		return resp
 	file = request.files['file']
-	if file.filename == '':
+    if file.filename == '':
 		resp = jsonify({'message' : 'No file selected for uploading'})
 		resp.status_code = 400
 		return resp
@@ -35,9 +52,19 @@ def upload_pdf():
 		resp.status_code = 400
 		return resp
 
+
 @app.route('/scan/<filename>',methods=['GET'])
 def get_data(filename):
+    """
+    Extracts data from a PDF file using the tabula library and returns the data in JSON format. The function reads all pages of the PDF file and extracts the grades data for each semester. The extracted data includes the subject code, subject name, credit, and grade for each subject. The function also extracts the name, roll number, course, and branch of the student from the PDF file.
     
+    Args:
+        filename (str): The name of the PDF file to be scanned.
+    
+    Returns:
+        Response: A response object with a JSON message containing the extracted data and a status code.
+    """
+
     path = os.path.abspath(os.path.join(os.getcwd(), filename))
     print(path)
     df = tabula.read_pdf(path,pages='all')
