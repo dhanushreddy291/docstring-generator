@@ -10,3 +10,7 @@ def mul(a, b):
     This function takes two arguments, a and b, and returns their product.
     """
     return a * b
+
+
+def sub(a, b):
+    return a - b
