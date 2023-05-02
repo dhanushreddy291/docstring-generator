@@ -19,7 +19,7 @@ def checkConnectionRedis():
     current_app.logger.info("---before_request---")
     try:
         _redis.ping()
-except _redis.ConnectionError:
+    except _redis.ConnectionError:
         redis = Redis(host='redis', port=6379)
         _redis_pubsub = _redis.pubsub()
         _redis_pubsub.subscribe('my-first-channel')
