@@ -17,6 +17,9 @@ sslcurve_fallback = sslcrypto.fallback.ecc.get_curve("secp256k1")
 sslcurve = sslcurve_native
 
 def loadLib(lib_name, silent=False):
+    """
+    This function loads the specified library and sets global variables accordingly. If the library is "libsecp256k1", it loads the library and sets the lib_verify_best variable to "libsecp256k1". If the library is "sslcrypto", it sets the sslcurve variable to sslcurve_native. If the library is "sslcrypto_fallback", it sets the sslcurve variable to sslcurve_fallback. If silent is False, it logs the time taken to load the library.
+    """
     global sslcurve, libsecp256k1message, lib_verify_best
     if lib_name == "libsecp256k1":
         s = time.time()
@@ -35,6 +38,7 @@ def loadLib(lib_name, silent=False):
     elif lib_name == "sslcrypto_fallback":
         sslcurve = sslcurve_fallback
 
+
 try:
     if not config.use_libsecp256k1:
         raise Exception("Disabled by config")
@@ -45,31 +49,46 @@ except Exception as err:
 
 
 def newPrivatekey():  # Return new private key
+    """
+    This function generates a new private key and returns it as a string in Wallet Import Format (WIF).
+    """
     return sslcurve.private_to_wif(sslcurve.new_private_key()).decode()
 
 
 def newSeed():
+    """
+    This function generates a new seed and returns it as a hexadecimal string.
+    """
     return binascii.hexlify(sslcurve.new_private_key()).decode()
 
 
 def hdPrivatekey(seed, child):
+    """
+    This function derives a child private key from the given seed and child index. The seed is provided as a string and the child index is an integer. The function returns the derived private key as a string in Wallet Import Format (WIF).
+    """
     # Too large child id could cause problems
     privatekey_bin = sslcurve.derive_child(seed.encode(), child % 100000000)
     return sslcurve.private_to_wif(privatekey_bin).decode()
 
 
 def privatekeyToAddress(privatekey):  # Return address from private key
+    """
+    This function takes a private key as input and returns its corresponding address. The private key can be provided in either hexadecimal format or in Wallet Import Format (WIF). If the input is invalid, the function returns False.
+    """
     try:
         if len(privatekey) == 64:
             privatekey_bin = bytes.fromhex(privatekey)
         else:
             privatekey_bin = sslcurve.wif_to_private(privatekey.encode())
         return sslcurve.private_to_address(privatekey_bin).decode()
-    except Exception:  # Invalid privatekey
+except Exception:  # Invalid privatekey
         return False
 
 
 def sign(data, privatekey):  # Return sign to data using private key
+    """
+    This function signs the given data using the provided private key and returns the signature as a base64-encoded string. The private key can be provided in either hexadecimal format or in Wallet Import Format (WIF). If the private key is in an old style format, the function returns None.
+    """
     if privatekey.startswith("23") and len(privatekey) > 52:
         return None  # Old style private key not supported
     return base64.b64encode(sslcurve.sign(
@@ -81,6 +100,9 @@ def sign(data, privatekey):  # Return sign to data using private key
 
 
 def verify(data, valid_address, sign, lib_verify=None):  # Verify data using address and sign
+    """
+    This function verifies the given data using the provided address and signature. The signature is provided as a base64-encoded string. The function uses the specified library (defaulting to the best available library) to recover the public key from the signature and then derives the address from the public key. If the valid_address parameter is a list, the function checks if the derived address matches any of the addresses in the list. Otherwise, it checks if the derived address matches the provided valid_address. The function returns True if the verification succeeds, False otherwise.
+    """
     if not lib_verify:
         lib_verify = lib_verify_best
 
@@ -99,3 +121,4 @@ def verify(data, valid_address, sign, lib_verify=None):  # Verify data using add
         return sign_address in valid_address
     else:  # One possible address
         return sign_address == valid_address
+
