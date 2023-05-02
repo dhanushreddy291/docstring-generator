@@ -9,11 +9,19 @@ cache = redis.Redis(host='redis', port=6379)
 
 
 def get_hit_count():
+    """
+    
+    Increments the hit count in the cache and returns the updated count. If there is a connection error with Redis, retries up to 5 times before raising the exception. 
+    
+    Returns:
+        int: The updated hit count in the cache.
+    
+    """
     retries = 5
     while True:
         try:
             return cache.incr('hits')
-        except redis.exceptions.ConnectionError as exc:
+except redis.exceptions.ConnectionError as exc:
             if retries == 0:
                 raise exc
             retries -= 1
@@ -22,6 +30,12 @@ def get_hit_count():
 
 @app.route('/')
 def hello():
+    """
+    A Flask route that returns a greeting message along with the hit count retrieved from the `get_hit_count()` function.
+    
+    Returns:
+        str: A greeting message with the hit count.
+    """
     count = get_hit_count()
     return 'Hello World! I have been seen {} times.\n'.format(count)
 
