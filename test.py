@@ -13,4 +13,7 @@ def mul(a, b):
 
 
 def sub(a, b):
+    """
+    This function takes two arguments, 'a' and 'b', and returns the difference between 'a' and 'b'.
+    """
     return a - b
