@@ -3,6 +3,20 @@ from fairseq.models.text_to_speech.hub_interface import TTSHubInterface
 
 
 def download_model():
+    """
+
+    Downloads a pre-trained FastSpeech2 model from Facebook's HF Hub and generates speech for a given text input using the model. The generated speech is returned as a waveform and its sampling rate.
+
+    Args:
+        None
+
+    Returns:
+        tuple: A tuple containing the generated speech waveform and its sampling rate.
+
+    Example:
+        >>> wav, rate = download_model()
+
+    """
     models, cfg, task = load_model_ensemble_and_task_from_hf_hub(
         "facebook/fastspeech2-en-ljspeech",
         arg_overrides={"vocoder": "hifigan", "fp16": False},
