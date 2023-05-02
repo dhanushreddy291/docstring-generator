@@ -1,19 +1,11 @@
 def pow(a, b):
-    """
-    This function takes two arguments, a and b, and returns the value of a raised to the power of b.
-    """
     return a**b
 
-
 def mul(a, b):
-    """
-    This function takes two arguments, a and b, and returns their product.
-    """
     return a * b
 
-
 def sub(a, b):
-    """
-    This function takes two arguments, 'a' and 'b', and returns the difference between 'a' and 'b'.
-    """
     return a - b
+
+def mod(a, b):
+    return a % b
