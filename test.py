@@ -8,7 +8,6 @@ def pow(a, b):
 
     Returns:
         int: The result of a raised to the power of b.
-
     """
     return a**b
 
