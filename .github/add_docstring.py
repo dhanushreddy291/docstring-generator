@@ -14,7 +14,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 starting_prompt = dict(
     {
         "role": "system",
-        "content": "I will send you a code of Python function. You need to analyse the code and return to me a string that I can use as the docstring for that function, so as to improve my documentation. The functions can also be flask and FastAPI routes, handle those cases too. Donot write any explanations, just send me a string that I can use as the docstring. The language style of the docstring should be simple and easy to understand",
+        "content": "I will send you a code of Python function. You need to analyse the code and return to me a string that I can use as the docstring for that function, so as to improve my documentation. The functions can also be flask and FastAPI routes, handle those cases too. Donot write any explanations, just send me a string that I can use as the docstring. The language style of the docstring should be simple and easy to understand and it should be in Google Style Multi-Line format",
     }
 )
 history = [
