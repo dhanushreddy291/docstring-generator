@@ -23,12 +23,18 @@ offset_map = {
 
 class File:
     def __init__(self, path: str) -> None:
+        """
+        Initializes an object of the class with the given file path. Raises a FileNotFoundError if the file does not exist. The path and type of the file are stored as attributes of the object.
+        """
         if not os.path.isfile(path):
             raise FileNotFoundError(f"File {path} does not exist.")
         self.path = path
         self.type = self.find_type()
 
     def find_type(self) -> str:
+        """
+        This function determines the type of the file based on its extension. If the type cannot be recognized, an Exception is raised. The function returns the type of the file, which is either "image" or "video". If the type is not supported, a ValueError is raised.
+        """
         _type = guess_type(self.path)[0]
         if not _type:
             raise Exception(f"File type cant be recognized")
@@ -47,6 +53,9 @@ class Watermark:
         pos: Position = Position.centre,
         offset: str = "",
     ) -> None:
+        """
+        Initializes an object of the class with the given overlay file, position and offset. The overlay file and position are stored as attributes of the object. If no offset is provided, the default offset for the given position is used. The offset is also stored as an attribute of the object.
+        """
         self.overlay = overlay
         self.pos = pos
         if not offset:
@@ -62,8 +71,11 @@ def apply_watermark(
     preset: str = "ultrafast",
     overwrite: bool = True,
 ) -> str:
+    """
+    Applies the given watermark to the given file using FFmpeg. The output file path is optional, and if not provided, it is generated based on the input file path. The frame rate and preset for the output file can also be specified. If the output file already exists and overwrite is set to True, it is deleted before the new file is generated. The function returns the path of the output file.
+    """
     if not output_file:
-        if file.type == 'video':
+        if file.type == "video":
             output_file = f"watered_{file.path}.gif"
         else:
             output_file = f"watered_{file.path}"
@@ -74,7 +86,7 @@ def apply_watermark(
         file.path,
         "-i",
         wtm.overlay,
-        "-an", # comment to enable audio
+        "-an",  # comment to enable audio
         "-dn",
         "-sn",
         "-r",
