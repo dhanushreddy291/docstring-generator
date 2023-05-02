@@ -1,124 +1,42 @@
-import logging
-import base64
-import binascii
-import time
-import hashlib
-
-from util.Electrum import dbl_format
-from Config import config
-
-import util.OpensslFindPatch
-
-lib_verify_best = "sslcrypto"
-
-from lib import sslcrypto
-sslcurve_native = sslcrypto.ecc.get_curve("secp256k1")
-sslcurve_fallback = sslcrypto.fallback.ecc.get_curve("secp256k1")
-sslcurve = sslcurve_native
-
-def loadLib(lib_name, silent=False):
-    """
-    This function loads the specified library and sets global variables accordingly. If the library is "libsecp256k1", it loads the library and sets the lib_verify_best variable to "libsecp256k1". If the library is "sslcrypto", it sets the sslcurve variable to sslcurve_native. If the library is "sslcrypto_fallback", it sets the sslcurve variable to sslcurve_fallback. If silent is False, it logs the time taken to load the library.
-    """
-    global sslcurve, libsecp256k1message, lib_verify_best
-    if lib_name == "libsecp256k1":
-        s = time.time()
-        from lib import libsecp256k1message
-        import coincurve
-        lib_verify_best = "libsecp256k1"
-        if not silent:
-            logging.info(
-                "Libsecpk256k1 loaded: %s in %.3fs" %
-                (type(coincurve._libsecp256k1.lib).__name__, time.time() - s)
-            )
-    elif lib_name == "sslcrypto":
-        sslcurve = sslcurve_native
-        if sslcurve_native == sslcurve_fallback:
-            logging.warning("SSLCurve fallback loaded instead of native")
-    elif lib_name == "sslcrypto_fallback":
-        sslcurve = sslcurve_fallback
+counts = {}
 
 
-try:
-    if not config.use_libsecp256k1:
-        raise Exception("Disabled by config")
-    loadLib("libsecp256k1")
-    lib_verify_best = "libsecp256k1"
-except Exception as err:
-    logging.info("Libsecp256k1 load failed: %s" % err)
+def make_key(cls, part: str):
+    model_prefix = getattr(cls._meta, "model_key_prefix", "").strip(":")
+    return f"{model_prefix}:{part}"
 
 
-def newPrivatekey():  # Return new private key
-    """
-    This function generates a new private key and returns it as a string in Wallet Import Format (WIF).
-    """
-    return sslcurve.private_to_wif(sslcurve.new_private_key()).decode()
+def get_id_creator(key: str):
+    global counts
+
+    if key not in counts:
+        counts[key] = 0
+
+    class PrimaryKeyCreator:
+        def create_pk(self, *args, **kwargs) -> str:
+            """Create a new primary key"""
+            global counts
+            counts[key] += 1
+            return str(counts[key])
+
+    return PrimaryKeyCreator
 
 
-def newSeed():
-    """
-    This function generates a new seed and returns it as a hexadecimal string.
-    """
-    return binascii.hexlify(sslcurve.new_private_key()).decode()
+def get_meta(key: str):
+    class Meta:
+        model_key_prefix = key
+        index_name = f"{key}:index"
+        primary_key_creator_cls = get_id_creator(key)
+
+    return Meta
 
 
-def hdPrivatekey(seed, child):
-    """
-    This function derives a child private key from the given seed and child index. The seed is provided as a string and the child index is an integer. The function returns the derived private key as a string in Wallet Import Format (WIF).
-    """
-    # Too large child id could cause problems
-    privatekey_bin = sslcurve.derive_child(seed.encode(), child % 100000000)
-    return sslcurve.private_to_wif(privatekey_bin).decode()
+def Base(key: str):
+    class Base:
+        @classmethod
+        def make_key(cls, part: str):
+            return make_key(cls, part)
 
+        Meta = get_meta(key)
 
-def privatekeyToAddress(privatekey):  # Return address from private key
-    """
-    This function takes a private key as input and returns its corresponding address. The private key can be provided in either hexadecimal format or in Wallet Import Format (WIF). If the input is invalid, the function returns False.
-    """
-    try:
-        if len(privatekey) == 64:
-            privatekey_bin = bytes.fromhex(privatekey)
-        else:
-            privatekey_bin = sslcurve.wif_to_private(privatekey.encode())
-        return sslcurve.private_to_address(privatekey_bin).decode()
-except Exception:  # Invalid privatekey
-        return False
-
-
-def sign(data, privatekey):  # Return sign to data using private key
-    """
-    This function signs the given data using the provided private key and returns the signature as a base64-encoded string. The private key can be provided in either hexadecimal format or in Wallet Import Format (WIF). If the private key is in an old style format, the function returns None.
-    """
-    if privatekey.startswith("23") and len(privatekey) > 52:
-        return None  # Old style private key not supported
-    return base64.b64encode(sslcurve.sign(
-        data.encode(),
-        sslcurve.wif_to_private(privatekey.encode()),
-        recoverable=True,
-        hash=dbl_format
-    )).decode()
-
-
-def verify(data, valid_address, sign, lib_verify=None):  # Verify data using address and sign
-    """
-    This function verifies the given data using the provided address and signature. The signature is provided as a base64-encoded string. The function uses the specified library (defaulting to the best available library) to recover the public key from the signature and then derives the address from the public key. If the valid_address parameter is a list, the function checks if the derived address matches any of the addresses in the list. Otherwise, it checks if the derived address matches the provided valid_address. The function returns True if the verification succeeds, False otherwise.
-    """
-    if not lib_verify:
-        lib_verify = lib_verify_best
-
-    if not sign:
-        return False
-
-    if lib_verify == "libsecp256k1":
-        sign_address = libsecp256k1message.recover_address(data.encode("utf8"), sign).decode("utf8")
-    elif lib_verify in ("sslcrypto", "sslcrypto_fallback"):
-        publickey = sslcurve.recover(base64.b64decode(sign), data.encode(), hash=dbl_format)
-        sign_address = sslcurve.public_to_address(publickey).decode()
-    else:
-        raise Exception("No library enabled for signature verification")
-
-    if type(valid_address) is list:  # Any address in the list
-        return sign_address in valid_address
-    else:  # One possible address
-        return sign_address == valid_address
-
+    return Base
