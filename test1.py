@@ -70,3 +70,6 @@ def mod(a, b):
         1
     """
     return a % b
+
+def div(a, b):
+    return a / b if b != 0 else "Divide by Zero, Infinity"
