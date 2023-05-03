@@ -73,4 +73,17 @@ def mod(a, b):
 
 
 def customFunc(a, b):
-    return (a * 3) + (b ** 0.5) + 8
+    """
+
+    Calculates the result of a custom function with two input parameters.
+
+    Args:
+        a (int or float): The first input parameter.
+        b (int or float): The second input parameter.
+
+    Returns:
+        The result of the custom function, which is calculated as follows:
+        (a * 3) + (b ** 0.5) + 8
+
+    """
+    return (a * 3) + (b**0.5) + 8
