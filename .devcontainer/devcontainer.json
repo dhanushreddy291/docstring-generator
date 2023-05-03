@@ -1,0 +1,11 @@
+{
+    "name": "Docstring-Generator",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+      "vscode": {
+        "extensions": ["GitHub.copilot", "ms-python.python"]
+      }
+    }
+  }
