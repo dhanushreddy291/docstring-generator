@@ -72,25 +72,5 @@ def mod(a, b):
     return a % b
 
 
-def div(a, b):
-    """
-    Divides two numbers and returns the result.
-
-    Args:
-        a (float): The numerator.
-        b (float): The denominator.
-
-    Returns:
-        float or str: The quotient of a and b if b is not equal to zero, otherwise returns "Divide by Zero, Infinity".
-
-    Raises:
-        ZeroDivisionError: If b is equal to zero.
-
-    Example:
-        >>> div(10, 2)
-        5.0
-        >>> div(5, 0)
-        'Divide by Zero, Infinity'
-
-    """
-    return a / b if b != 0 else "Divide by Zero, Infinity"
+def customFunc(a, b):
+    return (a * 3) + (b ** 0.5) + 8
