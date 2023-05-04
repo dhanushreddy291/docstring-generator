@@ -1,6 +1,6 @@
 # Docstring Generator GitHub Action
 
-This is a GitHub Action that automatically generates docstrings for Python functions using OpenAI's GPT-3 language model.
+This is a GitHub Action that automatically generates docstrings for Python functions using OpenAI's GPT-3 API.
 
 ## Usage
 
