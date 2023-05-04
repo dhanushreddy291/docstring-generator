@@ -92,6 +92,7 @@ def addDocstring(filePath):
     with open(filePath, "w", encoding="utf-8") as file:
         file.write(code.dumps())
 
+    # Optional: black and autoflake formatters
     # Format the new file with autoflake and black
     subprocess.run(
         [

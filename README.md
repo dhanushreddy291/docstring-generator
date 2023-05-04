@@ -1,5 +1,7 @@
 # Docstring Generator GitHub Action
 
+![Github Actions Workflow](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/byirq6owyvmgr5eypz3o.png)
+
 This is a GitHub Action that automatically generates docstrings for Python functions using OpenAI's GPT-3 API.
 
 ## Usage
@@ -205,6 +207,10 @@ black
 6.  Commit and push these changes to your repository's `main` branch.
 
 When you push changes to your repository's `main` branch, this GitHub Action will run and automatically add docstrings to any Python functions in your repository that don't already have them.
+
+# Demo
+
+![An Image showing the demo of Github Action](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/iujaq0r56xvq9mw7emee.png)
 
 ## Rate Limiting
 
