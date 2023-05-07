@@ -6,11 +6,16 @@ This is a GitHub Action that automatically generates docstrings for Python funct
 
 ## Usage
 
+### FOR THIS ACTION TO WORK YOU NEED TO ADD OPENAI API KEY IN YOUR REPOSITORY SECRET
+You can add it by going to Repository Settings, then Secrets and Variables then Actions. Add OpenAI API Key as `OPENAI_API_KEY` as specified the variable name in add_docstring.yaml Workflow.
+
+You also need to give read and write access for Github Actions by going to Settings, then Actions, then General and under workflow permissions give Read and Write Access to Github Actions so that autocommit works.
+
 To use this GitHub Action in your own repository, follow these steps:
 
 1.  Set up an OpenAI API key by signing up for their [beta program](https://beta.openai.com/signup/). Once you have an API key, create a new secret called `OPENAI_API_KEY` in your repository's settings and set the value to your API key.
     
-2.  Create a new workflow file (e.g. `.github/workflows/add_docstring.yml`) in your repository with the following contents:
+2.  Create a new workflow file (e.g. `.github/workflows/add_docstring.yaml`) in your repository with the following contents:
 
 ```yaml
 # Define the name of the Github Action workflow and the event that triggers it
